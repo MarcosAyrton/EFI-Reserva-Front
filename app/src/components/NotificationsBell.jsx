@@ -82,7 +82,6 @@ export default function NotificationsBell() {
 }
 
 function handleNotificationClick(n) {
-  // Special case: rental confirmation -> open PDF
   if (n.type === 'rental-confirmed' && n.payload) {
     try {
       const { rental, car, person } = n.payload;

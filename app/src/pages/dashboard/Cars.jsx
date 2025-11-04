@@ -5,7 +5,7 @@ import * as clientsService from '../../services/clients';
 import Button from '../../components/ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -422,6 +422,7 @@ function RentCarModal({ car, userId, onClose, onSuccess }) {
   const days = computeDays(start, end);
   const total = dailyRate * (days > 0 ? days : 0);
 
+
   const { notify } = useNotifications() || { notify: () => {} };
 
   const createRentalMutation = useMutation({
@@ -483,7 +484,7 @@ function RentCarModal({ car, userId, onClose, onSuccess }) {
   const onSubmit = (values) => createRentalMutation.mutate(values);
 
   return (
-    <Modal open onClose={onClose} ariaLabel="Alquilar auto" panelClassName="p-6">
+    <Modal open onClose={onClose} ariaLabel="Alquilar auto" className="w-[96%] md:w-[1000px]" panelClassName="p-6">
       <div className="mb-4">
         <h3 className="text-xl font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-violet-400">Confirmar alquiler</h3>
         <p className="text-sm text-slate-400 mt-1">Elegí las fechas y revisá tus datos</p>
@@ -530,6 +531,7 @@ function RentCarModal({ car, userId, onClose, onSuccess }) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm text-slate-300 mb-1">Fechas</label>
+
           <DateRangePicker
             start={start}
             end={end}
@@ -538,6 +540,7 @@ function RentCarModal({ car, userId, onClose, onSuccess }) {
               if (to) setValue('end', to, { shouldValidate: true });
             }}
           />
+
           {(errors.start || errors.end) && (
             <div className="mt-1 text-xs text-rose-400">{errors.start?.message || errors.end?.message}</div>
           )}
@@ -572,4 +575,13 @@ function computeDays(start, end) {
     const diff = (e - s) / (1000*60*60*24);
     return Math.max(0, Math.round(diff));
   } catch { return 0; }
+}
+
+
+function formatLabel(d) {
+  try {
+    const date = new Date(d);
+    if (isNaN(date)) return '-';
+    return date.toLocaleDateString('es-AR');
+  } catch { return '-'; }
 }
