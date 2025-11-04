@@ -33,8 +33,7 @@ export default function DashboardLayout() {
     logout();
     navigate('/auth/login');
   };
-
-  // Close on route change via NavLink click, on ESC, and on resize to md+
+  
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     window.addEventListener('keydown', onKey);
@@ -42,8 +41,7 @@ export default function DashboardLayout() {
     window.addEventListener('resize', onResize);
     return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize); };
   }, []);
-
-  // Lock body scroll when side drawer is open (mobile)
+  
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -55,7 +53,7 @@ export default function DashboardLayout() {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden flex flex-col">
       <BackgroundFX className="z-0" />
-      <header className="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-slate-900/70 bg-slate-900/90 border-b border-slate-800/80 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]">
+      <header className={`sticky top-0 z-30 ${open ? 'bg-slate-950' : 'backdrop-blur supports-[backdrop-filter]:bg-slate-900/70 bg-slate-900/90'} border-b border-slate-800/80 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]`}>
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Mobile menu toggle */}
@@ -96,32 +94,32 @@ export default function DashboardLayout() {
         <AnimatePresence>
           {open && (
             <>
-              {/* Backdrop */}
+              {/* Backdrop (opaque on mobile) */}
               <motion.div
                 key="drawer-backdrop"
-                className="fixed inset-0 z-40 md:hidden bg-slate-950/80 backdrop-blur-sm"
+                className="fixed inset-0 z-40 md:hidden bg-slate-950"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setOpen(false)}
               />
 
-              {/* Drawer */}
+              {/* Drawer (full-screen on mobile) */}
               <motion.aside
                 key="drawer"
+                role="dialog"
+                aria-modal="true"
                 initial={{ x: '-100%', opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: '-100%', opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 320, damping: 32, mass: 0.7 }}
-                className="fixed top-0 left-0 bottom-0 z-50 md:hidden w-[84vw] max-w-[320px] border-r border-slate-800/80 bg-slate-900/80 backdrop-blur-xl shadow-2xl"
+                className="fixed inset-0 z-50 md:hidden bg-slate-950"
               >
                 {/* Drawer header */}
-                <div className="px-4 py-3 flex items-center justify-between border-b border-slate-800/70">
-                  <div className="flex items-center gap-2">
-                    <Logo className="h-7 w-7" />
-                  </div>
+                <div className="px-4 py-4 flex items-center justify-between border-b border-slate-800">
+                  <Logo className="h-7 w-7" />
                   <button
-                    className="h-10 w-10 grid place-items-center rounded-lg border border-slate-800/70 bg-slate-900/60 text-slate-300 hover:text-white hover:border-cyan-500/40 hover:shadow-[0_0_18px_2px_rgba(34,211,238,0.10)] transition-all"
+                    className="h-10 w-10 grid place-items-center rounded-lg border border-slate-700 bg-slate-900 text-slate-200 hover:text-white hover:border-cyan-500/40 hover:shadow-[0_0_18px_2px_rgba(34,211,238,0.10)] transition-all"
                     aria-label="Cerrar menú"
                     onClick={() => setOpen(false)}
                   >
@@ -130,40 +128,34 @@ export default function DashboardLayout() {
                 </div>
 
                 {/* Drawer content */}
-                <nav className="px-2 py-2">
-                  <ul className="space-y-1">
+                <nav className="px-4 py-4 overflow-y-auto h-[calc(100vh-4rem)]">
+                  <ul className="space-y-2">
                     <li>
-                      <NavLink to="/dashboard" onClick={() => setOpen(false)} className={({ isActive }) => `flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive? 'text-white bg-slate-800/60 border border-slate-700/70':'text-slate-300 hover:text-white hover:bg-slate-800/40'}`}>
-                        <span>Inicio</span>
+                      <NavLink to="/dashboard" onClick={() => setOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base ${isActive? 'text-white bg-slate-800 border border-slate-700':'text-slate-300 hover:text-white hover:bg-slate-800/60'}`}>
+                        Inicio
                       </NavLink>
                     </li>
                     <li>
-                      <NavLink to="/dashboard/cars" onClick={() => setOpen(false)} className={({ isActive }) => `flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive? 'text-white bg-slate-800/60 border border-slate-700/70':'text-slate-300 hover:text-white hover:bg-slate-800/40'}`}>
-                        <span>Autos</span>
+                      <NavLink to="/dashboard/cars" onClick={() => setOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base ${isActive? 'text-white bg-slate-800 border border-slate-700':'text-slate-300 hover:text-white hover:bg-slate-800/60'}`}>
+                        Autos
                       </NavLink>
                     </li>
                     {role === 'admin' && (
                       <li>
-                        <NavLink to="/dashboard/rentals" onClick={() => setOpen(false)} className={({ isActive }) => `flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${isActive? 'text-white bg-slate-800/60 border border-slate-700/70':'text-slate-300 hover:text-white hover:bg-slate-800/40'}`}>
-                          <span>Alquileres</span>
+                        <NavLink to="/dashboard/rentals" onClick={() => setOpen(false)} className={({ isActive }) => `block px-4 py-3 rounded-xl text-base ${isActive? 'text-white bg-slate-800 border border-slate-700':'text-slate-300 hover:text-white hover:bg-slate-800/60'}`}>
+                          Alquileres
                         </NavLink>
                       </li>
                     )}
                   </ul>
 
-                  <div className="my-3 h-px w-full bg-slate-800/80" />
+                  <div className="my-5 h-px w-full bg-slate-800" />
 
-                  <div className="grid grid-cols-2 gap-2 px-1">
-                    <Button variant="secondary" size="sm" onClick={() => { setOpen(false); navigate('/dashboard/profile'); }}>Perfil</Button>
-                    <Button variant="danger" size="sm" onClick={() => { setOpen(false); onLogout(); }}>Salir</Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button variant="secondary" size="md" onClick={() => { setOpen(false); navigate('/dashboard/profile'); }}>Perfil</Button>
+                    <Button variant="danger" size="md" onClick={() => { setOpen(false); onLogout(); }}>Salir</Button>
                   </div>
                 </nav>
-
-                {/* Decorative bottom accents */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32">
-                  <div className="absolute -bottom-10 -right-6 h-32 w-32 rounded-full bg-cyan-500/20 blur-2xl" />
-                  <div className="absolute -bottom-16 -left-8 h-36 w-36 rounded-full bg-violet-600/20 blur-2xl" />
-                </div>
               </motion.aside>
             </>
           )}
