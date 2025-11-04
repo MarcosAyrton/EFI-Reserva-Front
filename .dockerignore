@@ -1,0 +1,22 @@
+# Reduce build context size
+.git
+.gitignore
+Dockerfile*
+docker-compose*
+Makefile
+README*
+
+# Node
+app/node_modules
+app/.npm
+app/.pnpm-store
+app/.yarn
+
+# Build outputs
+app/dist
+app/.vite
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+*.log
